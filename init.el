@@ -35,3 +35,4 @@
 (load "~/.emacs.d/packages")
 (load "~/.emacs.d/keybindings")
 (load "~/.emacs.d/repl")
+(load "~/.emacs.d/occur")
