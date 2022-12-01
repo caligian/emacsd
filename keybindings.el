@@ -33,6 +33,7 @@
 (general-create-definer alt-leader-x :prefix "<escape> x")
 (general-create-definer alt-leader-y :prefix "<escape> y")
 (general-create-definer alt-leader-z :prefix "<escape> z")
+(general-create-definer alt-leader-/ :prefix "<escape> /")
 (general-create-definer leader-a :prefix "<menu> a")
 (general-create-definer leader-b :prefix "<menu> b")
 (general-create-definer leader-c :prefix "<menu> c")
@@ -59,8 +60,20 @@
 (general-create-definer leader-x :prefix "<menu> x")
 (general-create-definer leader-y :prefix "<menu> y")
 (general-create-definer leader-z :prefix "<menu> z")
+(general-create-definer leader-/ :prefix "<menu> /")
 
 ;; Define your keybindings here
+;; Search
+(leader-/
+  "/" 'rg
+  "o" 'occur
+  "p" 'projectile-rg)
+
+(alt-leader-/
+  "/" 'rg
+  "o" 'occur
+  "p" 'projectile-rg)
+
 ;; Buffer management
 (leader-b
   "b" #'switch-to-buffer
