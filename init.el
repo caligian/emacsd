@@ -19,14 +19,19 @@
 (setq c-basic-offset 4)
 (setq tab-width 4)
 (setq indent-tabs-mode nil)
+(setq-default cursor-type 'bar)
 (setq inhibit-startup-screen t)
 
 ;; Set font
 (set-face-attribute 'default nil
-		    :family "Tamsyn"
+		    :family "Droid Sans Mono"
 		    :height 130)
 
-;; Load packages with their configs
-(load "~/.emacs.d/utils.el")
-(load "~/.emacs.d/packages.el")
+;; Use C-, as the user prefix key
+(global-unset-key (kbd "<menu>"))
 
+;; Load packages with their configs
+(load "~/.emacs.d/utils")
+(load "~/.emacs.d/packages")
+(load "~/.emacs.d/keybindings")
+(load "~/.emacs.d/repl")
