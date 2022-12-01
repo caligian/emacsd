@@ -1,32 +1,3 @@
-(require 'general)
-(defalias 'defkey 'general-define-key)
-(general-create-definer leader-a :prefix "<menu> a")
-(general-create-definer leader-b :prefix "<menu> b")
-(general-create-definer leader-c :prefix "<menu> c")
-(general-create-definer leader-d :prefix "<menu> d")
-(general-create-definer leader-e :prefix "<menu> e")
-(general-create-definer leader-f :prefix "<menu> f")
-(general-create-definer leader-g :prefix "<menu> g")
-(general-create-definer leader-h :prefix "<menu> h")
-(general-create-definer leader-i :prefix "<menu> i")
-(general-create-definer leader-j :prefix "<menu> j")
-(general-create-definer leader-k :prefix "<menu> k")
-(general-create-definer leader-l :prefix "<menu> l")
-(general-create-definer leader-m :prefix "<menu> m")
-(general-create-definer leader-n :prefix "<menu> n")
-(general-create-definer leader-o :prefix "<menu> o")
-(general-create-definer leader-p :prefix "<menu> p")
-(general-create-definer leader-q :prefix "<menu> q")
-(general-create-definer leader-r :prefix "<menu> r")
-(general-create-definer leader-s :prefix "<menu> s")
-(general-create-definer leader-t :prefix "<menu> t")
-(general-create-definer leader-u :prefix "<menu> u")
-(general-create-definer leader-v :prefix "<menu> v")
-(general-create-definer leader-w :prefix "<menu> w")
-(general-create-definer leader-x :prefix "<menu> x")
-(general-create-definer leader-y :prefix "<menu> y")
-(general-create-definer leader-z :prefix "<menu> z")
-
 (use-package dash)
 
 (use-package s)
@@ -34,17 +5,17 @@
 (use-package ht)
 
 (use-package feebleline
-  :demand
+  :demand t
   :config
   (feebleline-mode 1))
 
 (use-package base16-theme
-  :demand
+  :demand t
   :config
-  (load-theme 'base16-atelier-sulphurpool t))
+  (load-theme 'base16-gotham t))
 
 (use-package general
-  :demand
+  :demand t
   :config
   (require 'general)
   (defalias 'defkey 'general-define-key))
@@ -56,7 +27,7 @@
   (ivy-mode 1))
 
 (use-package counsel
-  :demand
+  :demand t
   :config
   (counsel-mode 1))
   
@@ -65,7 +36,7 @@
   :commands magit-status)
 
 (use-package smartparens
-  :demand
+  :demand t
   :bind (("C-M-y" . sp-copy-sexp)
 	 ("C-M-u" . sp-up-sexp)
 	 ("C-M-d" . sp-down-sexp)
@@ -101,8 +72,7 @@
 (use-package lsp-mode
   :defer t
   :config
-  (add-hooks '(python-mode-hook lsp-mode)
-	     '(ruby-mode-hook lsp-mode)))
+  :hook ((python-mode ruby-mode) . lsp-mode))
 
 (use-package yasnippet
   :defer t
@@ -114,22 +84,19 @@
   :defer t)
 
 (use-package pipenv
-  :defer t)
+  :defer t
+  :commands pipenv-mode)
 
 (use-package json-mode
   :defer t)
 
 (use-package lua-mode
-  :defer t) 
+  :defer t
+  :hook (lua-mode . lua-mode))
 
 (use-package ess
-  :defer t)
-
-(use-package julia-mode
-  :defer t)
-
-(use-package raku-mode
-  :defer t)
+  :defer t
+  :hook (r-mode . ess-r-mode))
 
 (use-package which-key
   :demand
@@ -139,8 +106,7 @@
   :config
   (which-key-mode 1))
 
-(use-package vterm
-  :defer t)
+(use-package vterm)
 
 (use-package rg
   :defer t
@@ -160,6 +126,7 @@
 	projectile-enable-caching t
 	projectile-sort-order 'recently-active
 	projectile-indexing-method 'alien)
+  
   (projectile-mode t))
 
 (use-package company
@@ -179,3 +146,9 @@
 
 (use-package lsp-ivy
   :defer t)
+
+(use-package geiser
+  :hook (scheme-mode . geiser))
+
+(use-package geiser-guile
+  :hook (scheme-mode . geiser-guile))

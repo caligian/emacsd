@@ -11,10 +11,12 @@
 			('raku-mode "/usr/bin/rakudo")
 			('haskell-mode "/usr/bin/ghci")
 			('sh-mode "/bin/bash")
+			('scheme-mode "/usr/bin/guile")
 			('r-mode "/usr/bin/R")
 			('R-mode "/usr/bin/R")))
 
 (setq compile-commands (ht ('ruby-mode "/usr/bin/ruby")
+			   ('scheme-mode "/usr/bin/guile")
 			   ('hy-mode (nth 0 (whereis "hy")))
 			   ('python-mode "/usr/bin/ipython")
 			   ('haskell-mode "/usr/bin/ghc -dynamic")
@@ -324,21 +326,38 @@
     (error "No build command provided for %s" mode))
   (compile (format "%s %s" cmd (current-buffer))))
 
-(define-minor-mode repl-mode
-  "Basic REPL extension for emacs"
-  :lighter " repl"
-  :keymap repl-mode-map
-  (let ((cmd (repl-get :repl)))
-    (cond
-     ((and cmd repl-mode)
-      (repl-start))
-     ((not cmd)
-      (message "No command specified for %s" major-mode))
-     (t
-      (setq repl-mode nil)))))
+;; Keybindings
+(alt-leader-r
+  "R" #'repl-shell-send-region
+  "&" #'repl-shell-start
+  "q" #'repl-shell-kill
+  "s" #'repl-shell-split
+  "v" #'repl-shell-vsplit
+  "k" #'repl-shell-hide
+  "l" #'repl-shell-send-line
+  "b" #'repl-shell-send-buffer
+  "." #'repl-shell-send-till-point
+  "i" #'repl-shell-send-string
+  "c" #'repl-shell-send-eof
+  "e" #'repl-shell-send-sexp
+  "d" #'repl-shell-send-defun
+  "r" #'repl-send-region  
+  "!" #'repl-start
+  "C-q" #'repl-kill
+  "C-s" #'repl-split
+  "C-v" #'repl-vsplit
+  "C-k" #'repl-hide
+  "C-l" #'repl-send-line
+  "C-b" #'repl-send-buffer
+  "C-." #'repl-send-till-point
+  "C-i" #'repl-send-string
+  "C-c" #'repl-send-eof
+  "C-d" #'repl-send-defun
+  "C-e" #'repl-send-sexp
+  "C-," #'repl-ivy-running
+  "C-`" #'repl-ivy-start)
 
-(defkey 
-  :prefix "<menu> r"
+(leader-r
   "R" #'repl-shell-send-region
   "&" #'repl-shell-start
   "q" #'repl-shell-kill
@@ -394,3 +413,15 @@
   "<f1>" #'repl-mode
   "<f2>" #'compile-buffer
   "<f3>" #'build-buffer)
+
+(define-minor-mode repl-mode
+  "Basic REPL extension for emacs"
+  :init-value nil
+  :lighter " repl"
+  :keymap repl-mode-map
+  (if (bound-and-true-p repl-mode)
+      (if (repl-get :repl)
+	  (repl-start)
+	(progn
+	  (message "No command defined for %s" major-mode)
+	  (setq repl-mode nil)))))
