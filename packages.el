@@ -4,15 +4,15 @@
 
 (use-package ht)
 
-(use-package feebleline
+(use-package mood-line
   :demand t
   :config
-  (feebleline-mode 1))
+  (mood-line-mode 1))
 
-(use-package base16-theme
+(use-package kaolin-themes
   :demand t
   :config
-  (load-theme 'base16-gotham t))
+  (load-theme 'kaolin-ocean t))
 
 (use-package general
   :demand t
@@ -148,7 +148,37 @@
   :defer t)
 
 (use-package geiser
-  :hook (scheme-mode . geiser))
+  :hook ((scheme-mode . geiser-mode)))
 
-(use-package geiser-guile
-  :hook (scheme-mode . geiser-guile))
+(use-package geiser-guile)
+
+(use-package slime
+  :config
+  (add-hooks )
+  :hook ((common-lisp-mode . slime)
+	 (common-lisp-mode . slime-mode))
+  
+  :init
+  (setq inferior-lisp-program "sbcl")
+  
+  :bind
+  (:map slime-mode-map
+	("C-x C-e" . slime-eval-last-expression)
+	("C-c C-b" . slime-eval-buffer)
+	("C-M-x" . slime-eval-defun)
+	("C-c C-c" . slime-compile-file)
+	("C-c C-e" . slime-eval-print-last-expression)
+	("C-c C-a" . slime-macroexpand-all)
+	("C-c C-\\" . slime-fuzzy-indent-and-complete-symbol)
+	("C-c C-d" . slime-documentation-lookup)
+	("C-c TAB" . slime-update-indentation)
+	("C-c C-r" . slime-eval-region)))
+
+(use-package perspective
+  :init
+  (global-unset-key (kbd "C-z"))
+  (setq persp-mode-prefix-key (kbd "C-z"))
+
+  :config
+  (persp-mode t)
+  (bind-key "b" 'persp-ivy-switch-buffer perspective-map))

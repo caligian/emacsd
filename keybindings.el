@@ -74,12 +74,6 @@
   "o" 'occur
   "p" 'projectile-rg)
 
-;; Buffer management
-(leader-b
-  "b" #'switch-to-buffer
-  "i" #'ibuffer
-  "q" #'kill-buffer)
-
 ;; File management
 (leader-f
   "f" #'find-file
@@ -93,8 +87,15 @@
   "s" #'save-buffer
   "r" #'counsel-recentf)
 
-;; Window management
+;; Window and Buffer management
+(leader-b
+  "b" #'switch-to-buffer
+  "i" #'ibuffer
+  "q" #'kill-buffer)
+
 (leader-w
+  "o" "C-x 1"
+  "q" "C-x 0"
   "k" #'windmove-up
   "j" #'windmove-down
   "h" #'windmove-left
@@ -110,6 +111,7 @@
 
 (alt-leader-w
   "o" "C-x 1"
+  "q" "C-x 0"
   "k" #'windmove-up
   "j" #'windmove-down
   "h" #'windmove-left
@@ -134,6 +136,16 @@
 (global-unset-key (kbd "C-S-g"))
 (global-set-key (kbd "C-S-g") 'magit-status)
 
+(leader-g
+  "g" 'magit-status
+  "s" 'magit-stage-file
+  "c" 'magit-commit
+  "p" 'magit-push
+  "C-p" 'magit-pull
+  "b" 'magit-branch
+  "i" 'magit-init
+  "u" 'magit-unstage)
+
 (alt-leader-g
   "g" 'magit-status
   "s" 'magit-stage-file
@@ -144,32 +156,16 @@
   "i" 'magit-init
   "u" 'magit-unstage)
 
-(leader-p
-  "." 'projectile-commander
-  "p" 'projectile-switch-project
-  "a" 'projectile-add-known-project
-  "d" 'projectile-find-dir
-  "C-d" 'projectile-dired
-  "f" 'projectile-find-file)
-
 ;; Projectile
-(alt-leader-p
-  "." 'projectile-commander
-  "p" 'projectile-switch-project
-  "a" 'projectile-add-known-project
-  "d" 'projectile-find-dir
-  "C-d" 'projectile-dired
-  "f" 'projectile-find-file)
-
-(alt-leader-p
-  "." 'projectile-commander
-  "p" 'projectile-switch-project
-  "a" 'projectile-add-known-project
-  "d" 'projectile-find-dir
-  "C-d" 'projectile-dired
-  "f" 'projectile-find-file)
-
 (leader-p
+  "." 'projectile-commander
+  "p" 'projectile-switch-project
+  "a" 'projectile-add-known-project
+  "d" 'projectile-find-dir
+  "C-d" 'projectile-dired
+  "f" 'projectile-find-file)
+
+(alt-leader-p
   "." 'projectile-commander
   "p" 'projectile-switch-project
   "a" 'projectile-add-known-project

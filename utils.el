@@ -1,4 +1,4 @@
-(defun add-hooks (&rest hooks)
+(defmacro add-hooks (&rest hooks)
   "Add multiple hooks conveniently
 
 Each FORM should be a quoted list with car as HOOK and cdr as FUNC1, FUNC2, ...
@@ -18,8 +18,8 @@ Example
 		     (rest (cdr func))
 		     (local (plist-get rest :local))
 	 	     (depth (plist-get rest :depth)))
-		(add-hook hook f depth local))
-	    (add-hook hook func)))
+                `(add-hook ,hook ,f ,depth ,local))
+	    `(add-hook ,hook ,func)))
       (error "No functions provided for hook %s" hook))))
 
 (defun trim-string (s)
