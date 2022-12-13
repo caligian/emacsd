@@ -4,10 +4,10 @@
 
 (use-package ht)
 
-(use-package mood-line
+(use-package feebleline
   :demand t
   :config
-  (mood-line-mode 1))
+  (feebleline-mode 1))
 
 (use-package kaolin-themes
   :demand t
@@ -91,8 +91,7 @@
   :defer t)
 
 (use-package lua-mode
-  :defer t
-  :hook (lua-mode . lua-mode))
+  :defer t)
 
 (use-package ess
   :defer t
@@ -152,17 +151,21 @@
 
 (use-package geiser-guile)
 
+(use-package avy
+  :bind (("C-'" . avy-goto-word-1)
+	 ("C-." . avy-goto-line)
+	 ("C->" . avy-goto-line-below)
+	 ("C-<" . avy-goto-line-above)))
+
 (use-package slime
-  :config
-  (add-hooks )
-  :hook ((common-lisp-mode . slime)
-	 (common-lisp-mode . slime-mode))
+  :commands slime-mode-map
   
   :init
   (setq inferior-lisp-program "sbcl")
   
   :bind
   (:map slime-mode-map
+	("C-c C-h" . slime-documentation)
 	("C-x C-e" . slime-eval-last-expression)
 	("C-c C-b" . slime-eval-buffer)
 	("C-M-x" . slime-eval-defun)
@@ -174,11 +177,4 @@
 	("C-c TAB" . slime-update-indentation)
 	("C-c C-r" . slime-eval-region)))
 
-(use-package perspective
-  :init
-  (global-unset-key (kbd "C-z"))
-  (setq persp-mode-prefix-key (kbd "C-z"))
-
-  :config
-  (persp-mode t)
-  (bind-key "b" 'persp-ivy-switch-buffer perspective-map))
+(use-package yasnippet-snippets)

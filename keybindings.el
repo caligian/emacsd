@@ -7,6 +7,7 @@
 (global-unset-key (kbd "<escape>"))
 
 ;; Create definers for inconvenience
+(general-create-definer alt-leader-tab :prefix "<escape> <tab>")
 (general-create-definer alt-leader-a :prefix "<escape> a")
 (general-create-definer alt-leader-b :prefix "<escape> b")
 (general-create-definer alt-leader-c :prefix "<escape> c")
@@ -34,6 +35,8 @@
 (general-create-definer alt-leader-y :prefix "<escape> y")
 (general-create-definer alt-leader-z :prefix "<escape> z")
 (general-create-definer alt-leader-/ :prefix "<escape> /")
+
+(general-create-definer leader-tab :prefix "<menu> <tab>")
 (general-create-definer leader-a :prefix "<menu> a")
 (general-create-definer leader-b :prefix "<menu> b")
 (general-create-definer leader-c :prefix "<menu> c")
@@ -176,3 +179,57 @@
 ;; LSP 
 (leader-l "s" 'lsp-ivy-workspace-symbol)
 (alt-leader-l "s" 'lsp-ivy-workspace-symbol)
+
+;; Geiser
+(alt-leader-r )
+
+;; Slime
+(alt-leader-r
+  :keymaps 'slime-mode-map
+  "e" 'slime-eval-last-expression
+  "b" 'slime-eval-buffer
+  "r" 'slime-eval-region
+  "d" 'slime-eval-defun
+  "m" 'slime-macroexpand-all
+  "v" (lambda nil
+	(interactive)
+	(split-window-and-switch-to-buffer :v (car (get-buffer-by-regexp "slime-repl"))))
+  "s" (lambda nil
+	(interactive)
+	(split-window-and-switch-to-buffer :s (car (get-buffer-by-regexp "slime-repl")))))
+
+(leader-r
+  :keymaps 'slime-mode-map
+  "e" 'slime-eval-last-expression
+  "b" 'slime-eval-buffer
+  "r" 'slime-eval-region
+  "d" 'slime-eval-defun
+  "m" 'slime-macroexpand-all
+  "v" (lambda nil
+	(interactive)
+	(split-window-and-switch-to-buffer :v (car (get-buffer-by-regexp "slime-repl"))))
+  "s" (lambda nil
+	(interactive)
+	(split-window-and-switch-to-buffer :s (car (get-buffer-by-regexp "slime-repl")))))
+
+(alt-leader-m
+  :keymaps 'slime-mode-map
+  "!" 'slime
+  "h" 'slime-hyperspec-lookup
+  "H" 'slime-describe-symbol
+  "f" 'slime-describe-function
+  "C-c" 'slime-interrupt
+  "l" 'slime-load-file
+  "c" 'slime-compile-file
+  "TAB" 'slime-fuzzy-indent-and-complete-symbol)
+
+(leader-m
+  :keymaps 'slime-mode-map
+  "!" 'slime
+  "h" 'slime-hyperspec-lookup
+  "H" 'slime-describe-symbol
+  "f" 'slime-describe-function
+  "C-c" 'slime-interrupt
+  "l" 'slime-load-file
+  "c" 'slime-compile-file
+  "TAB" 'slime-fuzzy-indent-and-complete-symbol)

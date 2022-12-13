@@ -4,9 +4,10 @@
 (require 'ht)
 
 (setq repl-commands (ht ('ruby-mode "/usr/bin/irb --inf-ruby-mode")
-			('hy-mode (nth 0 (whereis "hy")))
+			('hy-mode (nth 0 (whereis "hy" (concat (getenv "HOME") "/.local/bin/hy"))))
 			('python-mode "/usr/bin/ipython")
 			('lua-mode "/usr/bin/lua")
+			('lisp-mode "/usr/bin/sbcl")
 			('perl-mode "/usr/bin/perl")
 			('raku-mode "/usr/bin/rakudo")
 			('haskell-mode "/usr/bin/ghci")
@@ -16,9 +17,10 @@
 			('R-mode "/usr/bin/R")))
 
 (setq compile-commands (ht ('ruby-mode "/usr/bin/ruby")
+			   ('lisp-mode "/usr/bin/sbcl --script")
 			   ('scheme-mode "/usr/bin/guile")
-			   ('hy-mode (nth 0 (whereis "hy")))
-			   ('python-mode "/usr/bin/ipython")
+			   ('hy-mode (nth 0 (whereis "hy" (concat (getenv "HOME") "/.local/bin/hy"))))
+                           ('python-mode "/usr/bin/ipython")
 			   ('haskell-mode "/usr/bin/ghc -dynamic")
 			   ('lua-mode "/usr/bin/lua")
 			   ('perl-mode "/usr/bin/perl")
@@ -121,19 +123,7 @@
 
 (defn repl-show (&optional (split :s) (mode major-mode))
   (repl-assert-live mode)
-  (let* ((buffer (repl-get :buffer mode))
-         (win (get-buffer-window buffer 'visible)))
-    (when win
-      (delete-window win))
-    (pcase split
-      (:s (progn
-            (split-window-vertically)
-            (windmove-down)
-            (switch-to-buffer buffer)))
-      (:v (progn
-            (split-window-horizontally)
-            (windmove-right)
-            (switch-to-buffer buffer))))))
+  (split-window-and-switch-to-buffer split (repl-get :buffer mode)))
 
 (defun repl-show-split (&optional mode)
   (repl-show :s mode))
@@ -326,6 +316,26 @@
     (error "No build command provided for %s" mode))
   (compile (format "%s %s" cmd (current-buffer))))
 
+(defn compile-buffer-with-args (&optional (mode major-mode) (cmd (ht-get compile-commands mode)) (args ""))
+  (interactive)
+  (unless cmd
+    (error "No command provided for %s" mode))
+  (compile-buffer mode (concat (read-from-minibuffer "Pipe args % ")
+			       " | "
+			       cmd
+			       " "
+			       (read-from-minibuffer "Args % "))))
+
+(defn build-buffer-with-args (&optional (mode major-mode) (cmd (ht-get build-commands mode)) (args ""))
+  (interactive)
+  (unless cmd
+    (error "No command provided for %s" mode))
+  (build-buffer mode (concat (read-from-minibuffer "Pipe args % ")
+			       " | "
+			       cmd
+			       " "
+			       (read-from-minibuffer "Args % "))))
+
 ;; Keybindings
 (alt-leader-r
   "R" #'repl-shell-send-region
@@ -361,31 +371,31 @@
   "R" #'repl-shell-send-region
   "&" #'repl-shell-start
   "q" #'repl-shell-kill
-  "s" #'repl-shell-split
-  "v" #'repl-shell-vsplit
-  "k" #'repl-shell-hide
-  "l" #'repl-shell-send-line
-  "b" #'repl-shell-send-buffer
-  "." #'repl-shell-send-till-point
-  "i" #'repl-shell-send-string
-  "c" #'repl-shell-send-eof
-  "e" #'repl-shell-send-sexp
-  "d" #'repl-shell-send-defun
-  "r" #'repl-send-region  
+  "S" #'repl-shell-split
+  "V" #'repl-shell-vsplit
+  "K" #'repl-shell-hide
+  "L" #'repl-shell-send-line
+  "B" #'repl-shell-send-buffer
+  ">" #'repl-shell-send-till-point
+  "I" #'repl-shell-send-string
+  "C" #'repl-shell-send-eof
+  "E" #'repl-shell-send-sexp
+  "D" #'repl-shell-send-defun
+  "R" #'repl-send-region  
   "!" #'repl-start
-  "C-q" #'repl-kill
-  "C-s" #'repl-split
-  "C-v" #'repl-vsplit
-  "C-k" #'repl-hide
-  "C-l" #'repl-send-line
-  "C-b" #'repl-send-buffer
-  "C-." #'repl-send-till-point
-  "C-i" #'repl-send-string
-  "C-c" #'repl-send-eof
-  "C-d" #'repl-send-defun
-  "C-e" #'repl-send-sexp
-  "C-," #'repl-ivy-running
-  "C-`" #'repl-ivy-start)
+  "q" #'repl-kill
+  "s" #'repl-split
+  "v" #'repl-vsplit
+  "k" #'repl-hide
+  "l" #'repl-send-line
+  "b" #'repl-send-buffer
+  "." #'repl-send-till-point
+  "i" #'repl-send-string
+  "c" #'repl-send-eof
+  "d" #'repl-send-defun
+  "e" #'repl-send-sexp
+  "," #'repl-ivy-running
+  "`" #'repl-ivy-start)
 
 (defkey :keymaps 'repl-mode-map
   "Q" #'repl-shell-kill
@@ -406,13 +416,17 @@
   "b" #'repl-send-buffer
   "d" #'repl-send-defun
   "." #'repl-send-till-point
-  "s" #'repl-split
+  "s" #'repl-splits
   "v" #'repl-vsplit)
+
+(global-unset-key (kbd "<f1>"))
 
 (defkey
   "<f1>" #'repl-mode
   "<f2>" #'compile-buffer
-  "<f3>" #'build-buffer)
+  "<f3>" #'build-buffer
+  "S-<f2>" #'compile-buffer-with-args
+  "S-<f3>" #'build-buffer-with-args)
 
 (define-minor-mode repl-mode
   "Basic REPL extension for emacs"

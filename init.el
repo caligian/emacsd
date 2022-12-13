@@ -19,7 +19,7 @@
 (setq c-basic-offset 4)
 (setq tab-width 4)
 (setq indent-tabs-mode nil)
-(setq-default cursor-type 'bar)
+(setq-default cursor-type 'box)
 (setq inhibit-startup-screen t)
 
 ;; Set font
