@@ -102,6 +102,16 @@
   "q" #'kill-buffer
   "k" #'delete-window)
 
+(defkey :prefix "C-x w"
+  "o" "C-x 1"
+  "q" "C-x 0"
+  "k" #'windmove-up
+  "j" #'windmove-down
+  "h" #'windmove-left
+  "l" #'windmove-right
+  "s" #'split-window-below
+  "v" #'split-window-right)
+
 (leader-w
   :states 'normal
   "o" "C-x 1"
