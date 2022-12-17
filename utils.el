@@ -49,3 +49,27 @@ Returns a list of buffer objects matched by REGEXP or nil
             (split-window-horizontally)
             (windmove-right)
             (switch-to-buffer buffer))))))
+
+(defn get-shell-path (&optional (path "~/.bashrc"))
+  (if-let* ((envpath (with-temp-buffer
+		       (insert-file-contents path)
+		       (buffer-string)))
+	    (envpath (save-match-data
+		       (string-match "PATH=\"\\([^\"]+\\)" envpath)
+		       (match-string 1 envpath)))
+	    (envpath (replace-regexp-in-string "\\$HOME" (getenv "HOME") envpath t))
+	    (envpath (split-string envpath ":"))
+	    (envpath (catch 'break
+		       (dolist (i (number-sequence 0 (- (length envpath) 1)))
+			 (let ((p (nth i envpath)))
+			   (when (equal p "$PATH")
+			     (setf (nth i envpath) nil)
+			     (throw 'break envpath)))))))
+      (cl-loop for x in envpath
+	       when x
+	       collect x)))
+
+(defun append-exec-path-from-shell (&optional path)
+  (if-let* ((envpath (get-shell-path path)))
+      (dolist (x envpath)
+	(push x exec-path))))

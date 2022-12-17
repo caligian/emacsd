@@ -1,9 +1,6 @@
 ;; Aliases
 (defalias 'defn 'cl-defun)
 
-;; Load default theme here
-(load-theme 'wombat)
-
 ;; Basic modes
 (global-display-line-numbers-mode 1)
 (electric-indent-mode 1)
@@ -30,9 +27,11 @@
 ;; Use C-, as the user prefix key
 (global-unset-key (kbd "<menu>"))
 
-;; Load packages with their configs
+;; Load important non-package functions
 (load "~/.emacs.d/utils")
+(append-exec-path-from-shell "~/.zshrc")
+
+;; Load packages with their configs
 (load "~/.emacs.d/packages")
 (load "~/.emacs.d/keybindings")
 (load "~/.emacs.d/repl")
-(load "~/.emacs.d/occur")

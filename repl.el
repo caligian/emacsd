@@ -316,7 +316,7 @@
     (error "No build command provided for %s" mode))
   (compile (format "%s %s" cmd (current-buffer))))
 
-(defn compile-buffer-with-args (&optional (mode major-mode) (cmd (ht-get compile-commands mode)) (args ""))
+(defn compile-buffer-with-args (&optional (mode major-mode) (cmd (ht-get compile-commands mode)))
   (interactive)
   (unless cmd
     (error "No command provided for %s" mode))
@@ -326,7 +326,7 @@
 			       " "
 			       (read-from-minibuffer "Args % "))))
 
-(defn build-buffer-with-args (&optional (mode major-mode) (cmd (ht-get build-commands mode)) (args ""))
+(defn build-buffer-with-args (&optional (mode major-mode) (cmd (ht-get build-commands mode)))
   (interactive)
   (unless cmd
     (error "No command provided for %s" mode))
@@ -337,9 +337,10 @@
 			       (read-from-minibuffer "Args % "))))
 
 ;; Keybindings
-(alt-leader-r
-  "R" #'repl-shell-send-region
-  "&" #'repl-shell-start
+(alt-leader-x
+  :states '(normal visual)
+  "r" #'repl-shell-send-region
+  "!" #'repl-shell-start
   "q" #'repl-shell-kill
   "s" #'repl-shell-split
   "v" #'repl-shell-vsplit
@@ -350,38 +351,26 @@
   "i" #'repl-shell-send-string
   "c" #'repl-shell-send-eof
   "e" #'repl-shell-send-sexp
-  "d" #'repl-shell-send-defun
-  "r" #'repl-send-region  
-  "!" #'repl-start
-  "C-q" #'repl-kill
-  "C-s" #'repl-split
-  "C-v" #'repl-vsplit
-  "C-k" #'repl-hide
-  "C-l" #'repl-send-line
-  "C-b" #'repl-send-buffer
-  "C-." #'repl-send-till-point
-  "C-i" #'repl-send-string
-  "C-c" #'repl-send-eof
-  "C-d" #'repl-send-defun
-  "C-e" #'repl-send-sexp
-  "C-," #'repl-ivy-running
-  "C-`" #'repl-ivy-start)
+  "d" #'repl-shell-send-defun)
+
+(leader-x
+  :states '(normal visual)
+  "r" #'repl-shell-send-region
+  "!" #'repl-shell-start
+  "q" #'repl-shell-kill
+  "s" #'repl-shell-split
+  "v" #'repl-shell-vsplit
+  "k" #'repl-shell-hide
+  "l" #'repl-shell-send-line
+  "b" #'repl-shell-send-buffer
+  "." #'repl-shell-send-till-point
+  "i" #'repl-shell-send-string
+  "c" #'repl-shell-send-eof
+  "e" #'repl-shell-send-sexp
+  "d" #'repl-shell-send-defun)
 
 (leader-r
-  "R" #'repl-shell-send-region
-  "&" #'repl-shell-start
-  "q" #'repl-shell-kill
-  "S" #'repl-shell-split
-  "V" #'repl-shell-vsplit
-  "K" #'repl-shell-hide
-  "L" #'repl-shell-send-line
-  "B" #'repl-shell-send-buffer
-  ">" #'repl-shell-send-till-point
-  "I" #'repl-shell-send-string
-  "C" #'repl-shell-send-eof
-  "E" #'repl-shell-send-sexp
-  "D" #'repl-shell-send-defun
-  "R" #'repl-send-region  
+  :states '(normal visual)
   "!" #'repl-start
   "q" #'repl-kill
   "s" #'repl-split
@@ -397,45 +386,25 @@
   "," #'repl-ivy-running
   "`" #'repl-ivy-start)
 
-(defkey :keymaps 'repl-mode-map
-  "Q" #'repl-shell-kill
-  "K" #'repl-shell-hide
-  "E" #'repl-shell-send-sexp
-  "L" #'repl-shell-send-line
-  "B" #'repl-shell-send-buffer
-  "D" #'repl-shell-send-defun
-  ">" #'repl-shell-send-till-point
-  "S" #'repl-shell-split
-  "V" #'repl-shell-vsplit
-  "R" #'repl-shell-send-region
-  "r" #'repl-send-region
+(alt-leader-r
+  :states '(normal visual)
+  "!" #'repl-start
   "q" #'repl-kill
+  "s" #'repl-split
+  "v" #'repl-vsplit
   "k" #'repl-hide
   "l" #'repl-send-line
-  "e" #'repl-send-sexp
   "b" #'repl-send-buffer
-  "d" #'repl-send-defun
   "." #'repl-send-till-point
-  "s" #'repl-splits
-  "v" #'repl-vsplit)
-
-(global-unset-key (kbd "<f1>"))
+  "i" #'repl-send-string
+  "c" #'repl-send-eof
+  "d" #'repl-send-defun
+  "e" #'repl-send-sexp
+  "," #'repl-ivy-running
+  "`" #'repl-ivy-start)
 
 (defkey
-  "<f1>" #'repl-mode
   "<f2>" #'compile-buffer
   "<f3>" #'build-buffer
   "S-<f2>" #'compile-buffer-with-args
   "S-<f3>" #'build-buffer-with-args)
-
-(define-minor-mode repl-mode
-  "Basic REPL extension for emacs"
-  :init-value nil
-  :lighter " repl"
-  :keymap repl-mode-map
-  (if (bound-and-true-p repl-mode)
-      (if (repl-get :repl)
-	  (repl-start)
-	(progn
-	  (message "No command defined for %s" major-mode)
-	  (setq repl-mode nil)))))

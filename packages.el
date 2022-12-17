@@ -1,8 +1,14 @@
+(straight-use-package 'use-package)
+
 (use-package dash)
 
 (use-package s)
 
+(use-package f)
+
 (use-package ht)
+
+(use-package bind-key)
 
 (use-package feebleline
   :demand t
@@ -14,14 +20,47 @@
   :config
   (load-theme 'kaolin-ocean t))
 
+(use-package evil
+  :demand t
+
+  :init
+  (setq evil-move-beyond-eol t)
+
+  :config
+  (dolist (buf '(("^\\*[^*]*" . emacs)
+		 ("\\*scratch" . normal)))
+    (push buf evil-buffer-regexps))
+
+  (evil-mode 1)
+  (evil-set-initial-state 'vterm-mode 'emacs))
+
 (use-package general
   :demand t
+
   :config
-  (require 'general)
-  (defalias 'defkey 'general-define-key))
+  (defalias 'defkey 'general-define-key)
+
+  (defun evil-map (states &rest args)
+    (let* ((states (replace-regexp-in-string ":" "" (symbol-name states)))
+	   (states (split-string states ""))
+	   (states (--map (cdr (assoc (intern it) general-state-aliases)) states))
+	   (states (--filter it states)))
+      (apply #'defkey `(:states ,states ,@args))))
+
+  (defmacro evil-map* (&rest forms)
+    (dolist (f forms)
+      (let* ((states (nth 0 f))
+	     (rest (cdr f))
+	     (args `(,states ,@rest)))
+	(apply #'evil-map args)))))
+
+(use-package undo-tree)
+
+(use-package undo-fu)
 
 (use-package ivy
   :demand
+  :defines personal-keybindings
   :bind (("M-'" . ivy-resume))
   :config
   (ivy-mode 1))
@@ -30,13 +69,15 @@
   :demand t
   :config
   (counsel-mode 1))
-  
+
 (use-package magit
   :defer t
   :commands magit-status)
 
 (use-package smartparens
   :demand t
+  :defines smartparens-mode-map
+  :commands smartparens-mode-map
   :bind (("C-M-y" . sp-copy-sexp)
 	 ("C-M-u" . sp-up-sexp)
 	 ("C-M-d" . sp-down-sexp)
@@ -66,35 +107,24 @@
   (wrap-region-mode 1))
 
 (use-package treemacs
-  :defer t
   :commands treemacs)
-
-(use-package lsp-mode
-  :defer t
-  :config
-  :hook ((python-mode ruby-mode) . lsp-mode))
 
 (use-package yasnippet
   :defer t
-  :commands yas-global-mode
-  :config
-  (yas-global-mode))
+  :hook ((python-mode lua-mode emacs-lisp-mode lisp-mode ruby-mode perl-mode sh-mode) . yas-minor-mode))
 
 (use-package flycheck
   :defer t)
 
 (use-package pipenv
   :defer t
-  :commands pipenv-mode)
+  :hook (python-mode . pipenv-mode))
 
-(use-package json-mode
-  :defer t)
+(use-package json-mode)
 
-(use-package lua-mode
-  :defer t)
+(use-package lua-mode)
 
 (use-package ess
-  :defer t
   :hook (r-mode . ess-r-mode))
 
 (use-package which-key
@@ -105,10 +135,10 @@
   :config
   (which-key-mode 1))
 
-(use-package vterm)
+(use-package vterm
+  :commands vterm)
 
 (use-package rg
-  :defer t
   :commands rg)
 
 (use-package projectile
@@ -129,52 +159,81 @@
   (projectile-mode t))
 
 (use-package company
-  :defer t
+  :defines personal-keybindings
   :bind (("M-SPC" . company-complete))
-  :commands global-company-mode
   :config
   (setq company-idle-delay 0.3)
   (global-company-mode 1))
 
 (use-package haskell-mode)
 
-(use-package lsp-pyright
-  :hook (python-mode . (lambda nil
-			 (require 'lsp-pyright)
-			 (lsp))))
-
-(use-package lsp-ivy
-  :defer t)
-
-(use-package geiser
-  :hook ((scheme-mode . geiser-mode)))
-
-(use-package geiser-guile)
-
 (use-package avy
+  :defines personal-keybindings
   :bind (("C-'" . avy-goto-word-1)
 	 ("C-." . avy-goto-line)
 	 ("C->" . avy-goto-line-below)
 	 ("C-<" . avy-goto-line-above)))
 
-(use-package slime
-  :commands slime-mode-map
-  
-  :init
-  (setq inferior-lisp-program "sbcl")
-  
-  :bind
-  (:map slime-mode-map
-	("C-c C-h" . slime-documentation)
-	("C-x C-e" . slime-eval-last-expression)
-	("C-c C-b" . slime-eval-buffer)
-	("C-M-x" . slime-eval-defun)
-	("C-c C-c" . slime-compile-file)
-	("C-c C-e" . slime-eval-print-last-expression)
-	("C-c C-a" . slime-macroexpand-all)
-	("C-c C-\\" . slime-fuzzy-indent-and-complete-symbol)
-	("C-c C-d" . slime-documentation-lookup)
-	("C-c TAB" . slime-update-indentation)
-	("C-c C-r" . slime-eval-region)))
+(use-package yasnippet-snippets
+  :after yasnippet)
 
-(use-package yasnippet-snippets)
+(use-package eglot
+  :config
+  (defun start-eglot ()
+      (call-interactively 'eglot))
+  (add-hook 'python-mode-hook 'start-eglot)
+  (add-hook 'ruby-mode-hook 'start-eglot))
+
+(use-package vimish-fold
+  :after evil
+  :config
+  (vimish-fold-global-mode 1))
+
+(use-package evil-owl
+  :after evil
+  :config
+  (setq evil-owl-max-string-length 500)
+  (add-to-list 'display-buffer-alist
+               '("*evil-owl*"
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (window-height . 0.3)))
+  (evil-owl-mode))
+
+(use-package evil-snipe
+  :after evil
+  :config
+  (evil-snipe-mode 1))
+
+(use-package evil-surround
+  :after evil
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package tree-sitter-langs)
+
+(use-package tree-sitter
+  :hook ((python-mode lua-mode ruby-mode) . tree-sitter-mode))
+
+(use-package evil-textobj-tree-sitter
+  :after evil
+  :config
+  (defkey :keymaps 'evil-inner-text-objects-map
+    "f" (evil-textobj-tree-sitter-get-textobj "function.inner")
+    "b" (evil-textobj-tree-sitter-get-textobj "block.inner")
+    "." (evil-textobj-tree-sitter-get-textobj "call.inner")
+    "c" (evil-textobj-tree-sitter-get-textobj "class.inner")
+    ";" (evil-textobj-tree-sitter-get-textobj "comment.inner")
+    "?" (evil-textobj-tree-sitter-get-textobj "conditional.inner")
+    "i" (evil-textobj-tree-sitter-get-textobj "loop.inner")
+    "a" (evil-textobj-tree-sitter-get-textobj "parameter.inner"))
+
+  (defkey :keymaps 'evil-outer-text-objects-map
+    "f" (evil-textobj-tree-sitter-get-textobj "function.outer")
+    "b" (evil-textobj-tree-sitter-get-textobj "block.outer")
+    "." (evil-textobj-tree-sitter-get-textobj "call.outer")
+    "c" (evil-textobj-tree-sitter-get-textobj "class.outer")
+    ";" (evil-textobj-tree-sitter-get-textobj "comment.outer")
+    "?" (evil-textobj-tree-sitter-get-textobj "conditional.outer")
+    "i" (evil-textobj-tree-sitter-get-textobj "loop.outer")
+    "a" (evil-textobj-tree-sitter-get-textobj "parameter.outer")))
