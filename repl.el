@@ -337,24 +337,8 @@
 			       (read-from-minibuffer "Args % "))))
 
 ;; Keybindings
-(alt-leader-x
-  :states '(normal visual)
-  "r" #'repl-shell-send-region
-  "!" #'repl-shell-start
-  "q" #'repl-shell-kill
-  "s" #'repl-shell-split
-  "v" #'repl-shell-vsplit
-  "k" #'repl-shell-hide
-  "l" #'repl-shell-send-line
-  "b" #'repl-shell-send-buffer
-  "." #'repl-shell-send-till-point
-  "i" #'repl-shell-send-string
-  "c" #'repl-shell-send-eof
-  "e" #'repl-shell-send-sexp
-  "d" #'repl-shell-send-defun)
-
 (leader-x
-  :states '(normal visual)
+  '(n v)
   "r" #'repl-shell-send-region
   "!" #'repl-shell-start
   "q" #'repl-shell-kill
@@ -370,11 +354,11 @@
   "d" #'repl-shell-send-defun)
 
 (leader-r
-  :states '(normal visual)
+  '(n v)
   "!" #'repl-start
   "q" #'repl-kill
   "s" #'repl-split
-  "v" #'repl-vsplit
+  "v" #'repl-vsplit 
   "k" #'repl-hide
   "l" #'repl-send-line
   "b" #'repl-send-buffer
@@ -385,26 +369,3 @@
   "e" #'repl-send-sexp
   "," #'repl-ivy-running
   "`" #'repl-ivy-start)
-
-(alt-leader-r
-  :states '(normal visual)
-  "!" #'repl-start
-  "q" #'repl-kill
-  "s" #'repl-split
-  "v" #'repl-vsplit
-  "k" #'repl-hide
-  "l" #'repl-send-line
-  "b" #'repl-send-buffer
-  "." #'repl-send-till-point
-  "i" #'repl-send-string
-  "c" #'repl-send-eof
-  "d" #'repl-send-defun
-  "e" #'repl-send-sexp
-  "," #'repl-ivy-running
-  "`" #'repl-ivy-start)
-
-(defkey
-  "<f2>" #'compile-buffer
-  "<f3>" #'build-buffer
-  "S-<f2>" #'compile-buffer-with-args
-  "S-<f3>" #'build-buffer-with-args)

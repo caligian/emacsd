@@ -10,15 +10,17 @@
 
 (use-package bind-key)
 
-(use-package feebleline
+(use-package doom-modeline
   :demand t
   :config
-  (feebleline-mode 1))
+  (doom-modeline-mode 1))
 
 (use-package kaolin-themes
   :demand t
   :config
-  (load-theme 'kaolin-ocean t))
+  (load-theme 'kaolin-eclipse t))
+
+(use-package undo-tree)
 
 (use-package evil
   :demand t
@@ -47,12 +49,10 @@
 	   (states (--filter it states)))
       (apply #'defkey `(:states ,states ,@args))))
 
+
   (defmacro evil-map* (&rest forms)
-    (dolist (f forms)
-      (let* ((states (nth 0 f))
-	     (rest (cdr f))
-	     (args `(,states ,@rest)))
-	(apply #'evil-map args)))))
+    `(cl-loop for f in (quote ,forms)
+	      do (apply 'evil-map f))))
 
 (use-package undo-tree)
 
@@ -124,9 +124,6 @@
 
 (use-package lua-mode)
 
-(use-package ess
-  :hook (r-mode . ess-r-mode))
-
 (use-package which-key
   :demand
   :init
@@ -136,7 +133,10 @@
   (which-key-mode 1))
 
 (use-package vterm
-  :commands vterm)
+  :commands vterm
+  :config
+  (add-hook 'vterm-mode-hook (lambda nil
+			       (local-unset-key (kbd "M-SPC")))))
 
 (use-package rg
   :commands rg)
@@ -160,7 +160,7 @@
 
 (use-package company
   :defines personal-keybindings
-  :bind (("M-SPC" . company-complete))
+  :bind (("<f1>" . company-complete))
   :config
   (setq company-idle-delay 0.3)
   (global-company-mode 1))

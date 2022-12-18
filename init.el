@@ -26,6 +26,7 @@
 
 ;; Use C-, as the user prefix key
 (global-unset-key (kbd "<menu>"))
+(global-unset-key (kbd "M-SPC"))
 
 ;; Load important non-package functions
 (load "~/.emacs.d/utils")
@@ -33,5 +34,7 @@
 
 ;; Load packages with their configs
 (load "~/.emacs.d/packages")
+(load "~/.emacs.d/keybindings-init")
 (load "~/.emacs.d/keybindings")
 (load "~/.emacs.d/repl")
+ 
