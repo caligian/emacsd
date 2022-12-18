@@ -27,8 +27,9 @@
 	 (states (nth 1 form))
 	 (args (cdr (cdr form)))
 	 (definer (intern (format "leader-%s" prefix))))
-    (print definer)
-    (apply definer (list states) args)))
+    (apply definer `(,(ensure-list states) ,@args))))
+
+(user-create-leader-keybinding '(q normal ":" counsel-M-x))
 
 (defun user-create-leader-keybindings (mappings)
   (mapcar 'user-create-leader-keybinding form))
