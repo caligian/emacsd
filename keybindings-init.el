@@ -29,8 +29,6 @@
 	 (definer (intern (format "leader-%s" prefix))))
     (apply definer `(,(ensure-list states) ,@args))))
 
-(user-create-leader-keybinding '(q normal ":" counsel-M-x))
-
 (defun user-create-leader-keybindings (mappings)
   (mapcar 'user-create-leader-keybinding form))
 
