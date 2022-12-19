@@ -5,7 +5,7 @@
 
 (setq repl-commands (ht ('ruby-mode "/usr/bin/irb --inf-ruby-mode")
 			('hy-mode (nth 0 (whereis "hy" (concat (getenv "HOME") "/.local/bin/hy"))))
-			('python-mode "/usr/bin/ipython")
+			('python-mode "/usr/bin/python")
 			('lua-mode "/usr/bin/lua")
 			('lisp-mode "/usr/bin/sbcl")
 			('perl-mode "/usr/bin/perl")
@@ -337,35 +337,37 @@
 			       (read-from-minibuffer "Args % "))))
 
 ;; Keybindings
-(leader-x
-  '(n v)
-  "r" #'repl-shell-send-region
-  "!" #'repl-shell-start
-  "q" #'repl-shell-kill
-  "s" #'repl-shell-split
-  "v" #'repl-shell-vsplit
-  "k" #'repl-shell-hide
-  "l" #'repl-shell-send-line
-  "b" #'repl-shell-send-buffer
-  "." #'repl-shell-send-till-point
-  "i" #'repl-shell-send-string
-  "c" #'repl-shell-send-eof
-  "e" #'repl-shell-send-sexp
-  "d" #'repl-shell-send-defun)
-
-(leader-r
-  '(n v)
-  "!" #'repl-start
-  "q" #'repl-kill
-  "s" #'repl-split
-  "v" #'repl-vsplit 
-  "k" #'repl-hide
-  "l" #'repl-send-line
-  "b" #'repl-send-buffer
-  "." #'repl-send-till-point
-  "i" #'repl-send-string
-  "c" #'repl-send-eof
-  "d" #'repl-send-defun
-  "e" #'repl-send-sexp
-  "," #'repl-ivy-running
-  "`" #'repl-ivy-start)
+(leader-bind!
+ (x
+  (n v)
+  "r" repl-shell-send-region
+  "!" repl-shell-start
+  "q" repl-shell-kill
+  "s" repl-shell-split
+  "v" repl-shell-vsplit
+  "k" repl-shell-hide
+  "l" repl-shell-send-line
+  "b" repl-shell-send-buffer
+  "." repl-shell-send-till-point
+  "i" repl-shell-send-string
+  "r" repl-shell-send-region
+  "c" repl-shell-send-eof
+  "e" repl-shell-send-sexp
+  "d" repl-shell-send-defun)
+ (r
+  (n v)
+  "!" repl-start
+  "q" repl-kill
+  "r" repl-send-region
+  "s" repl-split
+  "v" repl-vsplit 
+  "k" repl-hide
+  "l" repl-send-line
+  "b" repl-send-buffer
+  "." repl-send-till-point
+  "i" repl-send-string
+  "c" repl-send-eof
+  "d" repl-send-defun
+  "e" repl-send-sexp
+  "," repl-ivy-running
+  "`" repl-ivy-start))

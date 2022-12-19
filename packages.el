@@ -86,6 +86,9 @@
 	 ("C-M-j" . sp-join-sexp))
   :config
   (require 'smartparens-config)
+  (add-hook 'ruby-mode-hook (lambda nil (require 'smartparens-ruby)))
+  (add-hook 'python-mode-hook (lambda nil (require 'smartparens-python)))
+  (add-hook 'lua-mode-hook (lambda nil (require 'smartparens-lua)))
   (smartparens-global-mode 1))
 
 (use-package wrap-region
@@ -163,11 +166,21 @@
 (use-package yasnippet-snippets
   :after yasnippet)
 
-(use-package eglot
-  :config
-  (cl-flet ((start-eglot () (call-interactively 'eglot)))
-    (add-hook 'python-mode-hook 'start-eglot)
-    (add-hook 'ruby-mode-hook 'start-eglot)))
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+
+  :hook ((python-mode ruby-mode) . lsp))
+
+(use-package lsp-ui
+  :after lsp-mode)
+
+(use-package flycheck)
+
+(use-package lsp-treemacs
+  :after (lsp-mode treemacs))
+
+(use-package lsp-ivy)
 
 (use-package vimish-fold
   :after evil

@@ -87,10 +87,17 @@
   normal
   "" company-complete))
 
+;; Keyboard Macros
 (leader-bind `(q
 	       normal
 	       "q"
 	       ,(general-simulate-key "C-x C-k" :state 'emacs)))
+
+;; LSP 
+(leader-bind `(l
+	       normal
+	       ""
+	       ,(general-simulate-key "C-c l" :state 'emacs)))
 
 ;; Alternative window bindings
 (defkey :prefix "C-x w"
