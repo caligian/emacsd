@@ -3,7 +3,7 @@
 ;; Syntax:
 ;; (FORMS...)
 ;; FORM is (<prefix> <states> ...) where ... consists of rest args passed to general-define-key
-(leader-bind*
+(leader-bind!
  ;; Search
  (/
   normal
@@ -87,11 +87,10 @@
   normal
   "" company-complete))
 
-(let ((macro-simulation (general-simulate-key "C-x C-k" :state 'emacs)))
-  (user-create-leader-keybinding `(q
-				   normal
-				   "q"
-				   ,macro-simulation)))
+(leader-bind `(q
+	       normal
+	       "q"
+	       ,(general-simulate-key "C-x C-k" :state 'emacs)))
 
 ;; Alternative window bindings
 (defkey :prefix "C-x w"
@@ -110,20 +109,8 @@
   "C-+" #'align-regexp)
 
 ;; Smartparens
-(evil-map*
- (:nv
-  :keymaps smartparens-mode-map
-  "w" sp-forward-sexp
-  "W" sp-next-sexp
-  "b" sp-backward-sexp
-  "B" sp-previous-sexp)
- (:nv
-  :keymaps smartparens-mode-map
-  "w" sp-forward-sexp
-  "W" sp-next-sexp
-  "b" sp-backward-sexp
-  "B" sp-previous-sexp)
- (:o
+(states-bind!
+ ((n v o)
   :keymaps smartparens-mode-map
   "w" sp-forward-sexp
   "W" sp-next-sexp

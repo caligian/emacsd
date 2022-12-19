@@ -18,21 +18,21 @@
 (use-package kaolin-themes
   :demand t
   :config
-  (load-theme 'kaolin-eclipse t))
-
-(use-package undo-tree)
+  (load-theme 'kaolin-valley-dark t))
 
 (use-package evil
   :demand t
 
   :init
   (setq evil-move-beyond-eol t)
+  (setq evil-undo-system 'undo-fu)
+  (setq evil-split-window-below t)
+  (setq evil-split-window-right t)
 
   :config
   (dolist (buf '(("^\\*[^*]*" . emacs)
 		 ("\\*scratch" . normal)))
     (push buf evil-buffer-regexps))
-
   (evil-mode 1)
   (evil-set-initial-state 'vterm-mode 'emacs))
 
@@ -40,21 +40,7 @@
   :demand t
 
   :config
-  (defalias 'defkey 'general-define-key)
-
-  (defun evil-map (states &rest args)
-    (let* ((states (replace-regexp-in-string ":" "" (symbol-name states)))
-	   (states (split-string states ""))
-	   (states (--map (cdr (assoc (intern it) general-state-aliases)) states))
-	   (states (--filter it states)))
-      (apply #'defkey `(:states ,states ,@args))))
-
-
-  (defmacro evil-map* (&rest forms)
-    `(cl-loop for f in (quote ,forms)
-	      do (apply 'evil-map f))))
-
-(use-package undo-tree)
+  (defalias 'defkey 'general-define-key))
 
 (use-package undo-fu)
 
@@ -179,10 +165,9 @@
 
 (use-package eglot
   :config
-  (defun start-eglot ()
-      (call-interactively 'eglot))
-  (add-hook 'python-mode-hook 'start-eglot)
-  (add-hook 'ruby-mode-hook 'start-eglot))
+  (cl-flet ((start-eglot () (call-interactively 'eglot)))
+    (add-hook 'python-mode-hook 'start-eglot)
+    (add-hook 'ruby-mode-hook 'start-eglot)))
 
 (use-package vimish-fold
   :after evil
